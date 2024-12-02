@@ -1,0 +1,2 @@
+# QT-tudentManageSystem
+基于QT的学生管理系统StudentManageSystem
