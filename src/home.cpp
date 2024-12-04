@@ -109,6 +109,10 @@ void Widget::studentdisp(std::vector<Student> students,QTableWidget *tableWidget
     tableWidget->horizontalHeader()->setVisible(true);
     tableWidget->verticalHeader()->setVisible(false);
     tableWidget->setColumnCount(14);//设置表格行数
+    //设置选中行高亮
+    tableWidget->setStyleSheet("QTableWidget::item:selected{"
+                               "background-color: lightblue;"
+                               "}");
     //ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);//平均拉伸
     //ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//根据内容调整宽度
     tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
@@ -358,12 +362,16 @@ void Widget::on_saveButton_clicked()
 
 void Widget::on_pushButton_4_clicked()
 {
+    int row=ui->tableWidget->currentRow();
+    int zongrow=ui->tableWidget->rowCount();
     //如果还有学生并且选中了一行则删除
     if(stu.getstudent().size()){
-        if(ui->tableWidget->currentRow()!=-1){
-            if(QMessageBox::warning(this,"删除学生","要删除-"+ui->tableWidget->item(ui->tableWidget->currentRow(),1)->text()+"-吗",QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes){
-                stu.deleteStudent(ui->tableWidget->item(ui->tableWidget->currentRow(),3)->text().toLongLong());
+        if(row!=-1){
+            if(QMessageBox::warning(this,"删除学生","要删除-"+ui->tableWidget->item(row,1)->text()+"-吗",QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes){
+                stu.deleteStudent(ui->tableWidget->item(row,3)->text().toLongLong());
+                if(zongrow==row)row--;
                 studentdisp(stu.getstudent(),ui->tableWidget);
+                ui->tableWidget->setCurrentCell(row,0);//选中这一行
                 ui->savetishi->setText("删除成功");
                 ui->savetishi->setStyleSheet("color : green");
             }

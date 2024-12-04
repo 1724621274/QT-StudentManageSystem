@@ -1,9 +1,9 @@
 /*
 作者：黎忠海
-完成时间：2024/11/27
+完成时间：2024/12/3
 实现功能：
 学生管理系统
-功能：学生的添加、删除、查找、筛选、排序、导出TXT、导入TXT
+功能：学生的添加、删除、查找、筛选、排序、导出TXT、导入TXT、超级管理员对管理员账户的添加与删除
 学生信息加密保存在本地
 加解密算法：DES
 
@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     //检查数据存放的文件夹是否存在，不存在则创建
     stu.CreateFolder(filewenjian);
+    root_key["admin"]="12345678";//超级管理员账号
     login lg;
     lg.show();
     return a.exec();

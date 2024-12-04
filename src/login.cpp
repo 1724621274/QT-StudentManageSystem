@@ -8,7 +8,6 @@ login::login(QWidget *parent) :
     QIcon icon(":/img/icons/logo.png");
     this->setWindowIcon(icon);
     this->setWindowTitle("学生信息管理系统——登录");
-    root_key["admin"]="12345678";//超级管理员账号
     readkey(keyfilename.toStdString(),&root_key);//读取普通管理员账号
 }
 

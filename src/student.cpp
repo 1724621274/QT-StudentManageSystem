@@ -164,8 +164,8 @@ void Student::printInfo() {
 //************************************
 // 方法名称:	CreateFolder
 // 概要:		创建文件夹
-// 返回值:		void
-// 参数:		QString folderPath 文件夹路径
+// 返回值:	bool
+// 参数:		QString fullpath 文件夹路径
 //************************************
 bool StudentManager::CreateFolder(QString fullpath)
 {
@@ -184,6 +184,27 @@ bool StudentManager::CreateFolder(QString fullpath)
         return dir.mkpath(fullpath); //创建多级目录
 }
 
+//************************************
+// 方法名称:	isAllDigits
+// 概要:		判断是否只含有数字
+// 返回值:   bool
+// 参数:		std:string str 文件夹路径
+//************************************
+bool StudentManager::isAllDigits(std::string str){
+    if (str.size()==0)return false;
+    bool dian=0;
+    for(auto & c : str)
+    {
+        if(((int)c)==0)break;//碰到空字符即表示结束
+        if(c=='.')
+        {
+            if(dian)return false;
+            dian=true;
+        }
+        else if(!std::isdigit(c))return false;
+    }
+    return true;
+}
 
 // 比较函数，用于按姓名排序
 bool StudentManager::compareByName_0( Student &s1,  Student &s2) {
@@ -486,6 +507,7 @@ bool StudentManager::saveToFile(const std::string& filename) {
     std::ofstream file(filename);
     if (file.is_open()) {
         for ( auto& student : students) {
+            file << "studentData::" << " ";
             file << student.getName().toStdString() << " ";
             file << student.getGender() << " ";
             file << student.getStudentId() << " ";
@@ -514,9 +536,12 @@ bool StudentManager::readFromFile(const std::string& filename) {
     if (file.is_open()) {
         Student student;
         while (true) {
-            std::string name;
-            int gender,  grade, majorId, classNumber, dormitoryNumber, bedNumber, score1, score2, score3, score4;
-            long long studentId;
+            if (file.eof()) {
+                break;
+            }
+            std::string kaitou ,name ,gender,  grade, majorId, classNumber, dormitoryNumber, bedNumber, score1, score2, score3, score4, studentId;
+            file >> kaitou;
+            if(kaitou.c_str()!=QString("studentData::"))continue;
             file >> name;
             file >> gender;
             file >> studentId;
@@ -529,27 +554,40 @@ bool StudentManager::readFromFile(const std::string& filename) {
             file >> score2;
             file >> score3;
             file >> score4;
+            //检测长度是否为零
+            if(name.size()==0)continue;
+            //检测是否为数字
+            if(!isAllDigits(gender))continue;
+            if(!isAllDigits(studentId))continue;
+            if(!isAllDigits(grade))continue;
+            if(!isAllDigits(majorId))continue;
+            if(!isAllDigits(classNumber))continue;
+            if(!isAllDigits(dormitoryNumber))continue;
+            if(!isAllDigits(bedNumber))continue;
+            if(!isAllDigits(score1))continue;
+            if(!isAllDigits(score2))continue;
+            if(!isAllDigits(score3))continue;
+            if(!isAllDigits(score4))continue;
 
-            if (file.eof()) {
-                break;
-            }
+
+
             if(!zt){
                 students.clear();
                 zt=true;
             }
 
             student.setName(name.c_str());
-            student.setGender(gender);
-            student.setStudentId(studentId);
-            student.setGrade(grade);
-            student.setMajorId(majorId);
-            student.setClassNumber(classNumber);
-            student.setDormitoryNumber(dormitoryNumber);
-            student.setBedNumber(bedNumber);
-            student.setScore1(score1);
-            student.setScore2(score2);
-            student.setScore3(score3);
-            student.setScore4(score4);
+            student.setGender(stoi(gender));//stoi: string转换int
+            student.setStudentId(stoll(studentId));//stoll: string转换longlong
+            student.setGrade(stoi(grade));
+            student.setMajorId(stoi(majorId));
+            student.setClassNumber(stoi(classNumber));
+            student.setDormitoryNumber(stoi(dormitoryNumber));
+            student.setBedNumber(stoi(bedNumber));
+            student.setScore1(stod(score1));//stod: string转换double
+            student.setScore2(stod(score2));
+            student.setScore3(stod(score3));
+            student.setScore4(stod(score4));
             student.recalculateAverageScore();
 
             students.push_back(student);
@@ -561,11 +599,12 @@ bool StudentManager::readFromFile(const std::string& filename) {
     return zt;
 }
 
-//保存到文件
+//DES::::保存到文件
 bool StudentManager::saveDesToFile(const std::string& filename) {
     std::ofstream file(filename);
     if (file.is_open()) {
         for ( auto& student : students) {
+            file << des_encrypt("@#@lzh",deskey.toStdString()) << " ";
             file << des_encrypt(student.getName().toStdString(),deskey.toStdString()) << " ";
             file << des_encrypt(std::to_string(student.getGender()),deskey.toStdString()) << " ";
             file << des_encrypt(std::to_string(student.getStudentId()),deskey.toStdString()) << " ";
@@ -587,14 +626,26 @@ bool StudentManager::saveDesToFile(const std::string& filename) {
     return true;
 }
 
-// 从文件读取学生信息
+// DES::::从文件读取学生信息
 bool StudentManager::readDesFromFile(const std::string& filename) {
     std::ifstream file(filename);
     bool zt=false;
     if (file.is_open()) {
         Student student;
         while (true) {
-            std::string name,gender, studentId, grade, majorId, classNumber, dormitoryNumber, bedNumber, score1, score2, score3, score4;
+            if (file.eof()) {
+                break;
+            }
+            std::string kaitou,name,gender, studentId, grade, majorId, classNumber, dormitoryNumber, bedNumber, score1, score2, score3, score4;
+            file >> kaitou;
+            if(kaitou.size()%64 != 0){
+                continue;
+            }
+            if(des_decrypt(kaitou,deskey.toStdString()).c_str() != QString("@#@lzh")){
+
+                continue;
+            }
+
             file >> name;
             file >> gender;
             file >> studentId;
@@ -608,6 +659,20 @@ bool StudentManager::readDesFromFile(const std::string& filename) {
             file >> score3;
             file >> score4;
 
+            //判断长度是否为64的倍数，因为DES密文长度是64的倍数,并且密文有长度
+            if(name.size()%64 != 0 && name.size())continue;
+            if(gender.size()%64 != 0 && gender.size())continue;
+            if(studentId.size()%64 != 0 && studentId.size())continue;
+            if(grade.size()%64 != 0 && grade.size())continue;
+            if(majorId.size()%64 != 0 && majorId.size())continue;
+            if(classNumber.size()%64 != 0 && classNumber.size())continue;
+            if(dormitoryNumber.size()%64 != 0 && dormitoryNumber.size())continue;
+            if(bedNumber.size()%64 != 0 && bedNumber.size())continue;
+            if(score1.size()%64 != 0 && score1.size())continue;
+            if(score2.size()%64 != 0 && score2.size())continue;
+            if(score3.size()%64 != 0 && score3.size())continue;
+            if(score4.size()%64 != 0 && score4.size())continue;
+
             name=des_decrypt(name,deskey.toStdString());
             gender=des_decrypt(gender,deskey.toStdString());
             studentId=des_decrypt(studentId,deskey.toStdString());
@@ -620,15 +685,19 @@ bool StudentManager::readDesFromFile(const std::string& filename) {
             score2=des_decrypt(score2,deskey.toStdString());
             score3=des_decrypt(score3,deskey.toStdString());
             score4=des_decrypt(score4,deskey.toStdString());
+            //检测是否为数字
+            if(!isAllDigits(gender))continue;
+            if(!isAllDigits(studentId))continue;
+            if(!isAllDigits(grade))continue;
+            if(!isAllDigits(majorId))continue;
+            if(!isAllDigits(classNumber))continue;
+            if(!isAllDigits(dormitoryNumber))continue;
+            if(!isAllDigits(bedNumber))continue;
+            if(!isAllDigits(score1))continue;
+            if(!isAllDigits(score2))continue;
+            if(!isAllDigits(score3))continue;
+            if(!isAllDigits(score4))continue;
 
-
-            if (file.eof()) {
-                break;
-            }
-            if(!zt){
-                students.clear();
-                zt=true;
-            }
             student.setName(name.c_str());
             student.setGender(stoi(gender));
             student.setStudentId(stoll(studentId));
@@ -637,12 +706,15 @@ bool StudentManager::readDesFromFile(const std::string& filename) {
             student.setClassNumber(stoi(classNumber));
             student.setDormitoryNumber(stoi(dormitoryNumber));
             student.setBedNumber(stoi(bedNumber));
-            student.setScore1(stoi(score1));
-            student.setScore2(stoi(score2));
-            student.setScore3(stoi(score3));
-            student.setScore4(stoi(score4));
+            student.setScore1(stod(score1));
+            student.setScore2(stod(score2));
+            student.setScore3(stod(score3));
+            student.setScore4(stod(score4));
             student.recalculateAverageScore();
-
+            if(!zt){
+                students.clear();
+                zt=true;
+            }
             students.push_back(student);
         }
         file.close();

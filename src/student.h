@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QFile>
+#include <string>
 //学生类
 class Student {
     private:
@@ -174,7 +175,7 @@ class StudentManager {
 
         //检查文件夹是否存在，不存在则创建
         bool CreateFolder(QString fullpath);
-
+        bool isAllDigits(std::string str);
         //性别转换：map映射
         std::map<QString,int>gender_str_to_int;
         std::map<int,QString>gender_int_to_str;
