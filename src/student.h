@@ -186,6 +186,9 @@ class StudentManager {
         // 添加学生
         void addStudent(Student student);
 
+        //修改学生
+        void updateStudent(long long studentId, Student& newStudent);
+
         // 删除学生
         void deleteStudent(long long studentId);
 

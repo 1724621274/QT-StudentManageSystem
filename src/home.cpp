@@ -32,7 +32,6 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
     delete ui;
-    delete validator ;
 }
 
 void Widget::resizeEvent(QResizeEvent *event)
@@ -239,102 +238,6 @@ void Widget::on_dispButton_clicked()
 
 }
 
-//回到主页
-void Widget::on_pushButton_7_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(0);
-}
-
-//页面2：添加学生信息
-void Widget::on_addButton_clicked()
-{
-    ui->addname->setText("");
-    ui->addxingbie->setCurrentIndex(0);
-    ui->addnianji->setText("");
-    ui->addxuehao->setText("");
-    ui->addbanji->setText("");
-    ui->addzhuanye->setCurrentIndex(0);
-    ui->addqinshi->setText("");
-    ui->addchuanghao->setCurrentIndex(0);
-    ui->addcj1->setText("");
-    ui->addcj2->setText("");
-    ui->addcj3->setText("");
-    ui->addcj4->setText("");
-
-    validator->setRange(0,100,2);
-    ui->addcj1->setValidator(validator);
-    ui->addcj2->setValidator(validator);
-    ui->addcj3->setValidator(validator);
-    ui->addcj4->setValidator(validator);
-    ui->stackedWidget->setCurrentIndex(2);
-}
-
-//页面2的添加学生按钮
-void Widget::on_pushButton_10_clicked()
-{
-    bool xb=false;
-    if(ui->addxingbie->currentIndex()==1)xb=true;
-    Student student(ui->addname->text(),xb,ui->addxuehao->text().toLongLong(),ui->addnianji->text().toInt(),ui->addzhuanye->currentIndex(),ui->addbanji->text().toInt(),ui->addqinshi->text().toInt(),ui->addchuanghao->currentIndex(),ui->addcj1->text().toDouble(),ui->addcj2->text().toDouble(),ui->addcj3->text().toDouble(),ui->addcj4->text().toDouble());
-    student.printInfo();
-    stu.addStudent(student);
-    ui->addname->setText("");
-    ui->addxingbie->setCurrentIndex(0);
-    ui->addnianji->setText("");
-    ui->addxuehao->setText("");
-    ui->addbanji->setText("");
-    ui->addzhuanye->setCurrentIndex(0);
-    ui->addqinshi->setText("");
-    ui->addchuanghao->setCurrentIndex(0);
-    ui->addcj1->setText("");
-    ui->addcj2->setText("");
-    ui->addcj3->setText("");
-    ui->addcj4->setText("");
-}
-
-//成绩输入框槽函数1
-void Widget::on_addcj1_textChanged(const QString &arg1)
-{
-    if(arg1.toDouble()>100||arg1.toDouble()<0)
-    {
-        //ui->addcj1->setStyleSheet("color: red;");
-        ui->addcj1->setText("");
-        QMessageBox::warning(this, "输入错误", "输入格式不符合要求，请输入0~100的小数");
-    }
-}
-
-//成绩输入框槽函数2
-void Widget::on_addcj2_textChanged(const QString &arg1)
-{
-    if(arg1.toDouble()>100||arg1.toDouble()<0)
-    {
-        //ui->addcj1->setStyleSheet("color: red;");
-        ui->addcj2->setText("");
-        QMessageBox::warning(this, "输入错误", "输入格式不符合要求，请输入0~100的小数");
-    }
-}
-
-//成绩输入框槽函数3
-void Widget::on_addcj3_textChanged(const QString &arg1)
-{
-    if(arg1.toDouble()>100||arg1.toDouble()<0)
-    {
-        //ui->addcj1->setStyleSheet("color: red;");
-        ui->addcj3->setText("");
-        QMessageBox::warning(this, "输入错误", "输入格式不符合要求，请输入0~100的小数");
-    }
-}
-
-//成绩输入框槽函数4
-void Widget::on_addcj4_textChanged(const QString &arg1)
-{
-    if(arg1.toDouble()>100||arg1.toDouble()<0)
-    {
-        //ui->addcj1->setStyleSheet("color: red;");
-        ui->addcj4->setText("");
-        QMessageBox::warning(this, "输入错误", "输入格式不符合要求，请输入0~100的小数");
-    }
-}
-
 //从TXT文件中加载
 void Widget::on_pushButton_3_clicked()
 {
@@ -393,13 +296,13 @@ void Widget::on_pushButton_4_clicked()
 
 void Widget::on_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
 {
-    Dialog *dialog=new Dialog;
-    dialog->dispdata(stu.findStudentByStudentId(ui->tableWidget->item(item->row(),3)->text().toLongLong()));
-    dialog->setWindowTitle("学生信息展示");
+    Dialog dialog;
+    dialog.dispdata(*stu.findStudentByStudentId(ui->tableWidget->item(item->row(),3)->text().toLongLong()));
+    dialog.setWindowTitle("学生信息展示");
     QIcon icon(":/img/icons/logo.png");
-    dialog->setWindowIcon(icon);
-    dialog->exec();
-    delete dialog;
+    dialog.setWindowIcon(icon);
+    connect(&dialog,&Dialog::updatestudent,this,&Widget::emitstudentdisp);
+    dialog.exec();
 }
 
 
@@ -533,3 +436,12 @@ void Widget::on_outButton_clicked()
     this->close();
 }
 
+void Widget::on_addstudent_clicked()
+{
+    add_student add_stu;
+    add_stu.exec();
+}
+
+void Widget::emitstudentdisp(){
+    studentdisp(stu.getstudent(),ui->tableWidget);
+}

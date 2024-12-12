@@ -21,6 +21,7 @@ Student::Student(QString n, int g, long long id, int gr, int majId, int clsNum, 
 
 // 设置姓名
 void Student::setName(QString n) {
+    name.clear();
     name = n;
 }
 
@@ -333,6 +334,40 @@ StudentManager::StudentManager()
 // 添加学生
 void StudentManager::addStudent(Student student) {
     students.push_back(student);
+}
+
+//修改学生
+void StudentManager::updateStudent(long long studentId, Student &newStudent) {
+    for (auto& student : students) {
+        if (student.getStudentId() == studentId) {
+            // 更新姓名
+            student.setName(newStudent.getName());
+            // 更新性别
+            student.setGender(newStudent.getGender());
+            // 更新年级
+            student.setGrade(newStudent.getGrade());
+            // 更新专业编号
+            student.setMajorId(newStudent.getMajorId());
+            // 更新班级
+            student.setClassNumber(newStudent.getClassNumber());
+            // 更新宿舍号
+            student.setDormitoryNumber(newStudent.getDormitoryNumber());
+            // 更新床位号
+            student.setBedNumber(newStudent.getBedNumber());
+            // 更新成绩1
+            student.setScore1(newStudent.getScore1());
+            // 更新成绩2
+            student.setScore2(newStudent.getScore2());
+            // 更新成绩3
+            student.setScore3(newStudent.getScore3());
+            // 更新成绩4
+            student.setScore4(newStudent.getScore4());
+            // 重新计算平均分
+            student.recalculateAverageScore();
+            break;
+        }
+
+    }
 }
 
 // 删除学生

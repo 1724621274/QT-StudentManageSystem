@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     add_admin.cpp \
+    add_student.cpp \
     admin.cpp \
     des.cpp \
     home.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 
 HEADERS += \
     add_admin.h \
+    add_student.h \
     admin.h \
     des.h \
     home.h \
@@ -29,6 +31,7 @@ HEADERS += \
 
 FORMS += \
     add_admin.ui \
+    add_student.ui \
     admin.ui \
     home.ui \
     login.ui \

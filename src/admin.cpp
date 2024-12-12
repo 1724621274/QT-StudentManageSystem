@@ -74,7 +74,6 @@ void admin::on_join_home_clicked()
 
 void admin::on_add_admin_clicked()
 {
-    add->setModal(true);
     add->show1();
     connect(add,&add_admin::add_admin_successfuly,this,&admin::disp);
 }

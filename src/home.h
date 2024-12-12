@@ -14,6 +14,7 @@
 #include <QFont>
 #include <QIcon>
 #include <QScreen>
+#include "add_student.h"
 extern bool fangshi[13];
 extern int stuID;//澹版槑鍏ㄥ眬鍙橀噺stuID
 extern StudentManager stu;//澹版槑鍏ㄥ眬鍙橀噺stu
@@ -29,9 +30,6 @@ class Widget : public QWidget
 public:
     Widget(QWidget *parent = nullptr);
 
-
-
-    QDoubleValidator* validator = new QDoubleValidator(this);
     /**
      * 瀛︾敓淇℃伅鏄剧ず鍦ㄨ〃鏍间腑
      */
@@ -58,20 +56,6 @@ private slots:
 
     void on_dispButton_clicked();
 
-    void on_pushButton_7_clicked();
-
-    void on_addButton_clicked();
-
-    void on_pushButton_10_clicked();
-
-    void on_addcj1_textChanged(const QString &arg1);
-
-    void on_addcj2_textChanged(const QString &arg1);
-
-    void on_addcj3_textChanged(const QString &arg1);
-
-    void on_addcj4_textChanged(const QString &arg1);
-
     void liekuan(QTableWidget *tableWidget);
 
     void on_pushButton_3_clicked();
@@ -91,6 +75,10 @@ private slots:
     void on_chazhaoqi_returnPressed();
 
     void on_outButton_clicked();
+
+    void on_addstudent_clicked();
+
+    void emitstudentdisp();
 
 private:
     //閲嶅啓resizeEvent鍑芥暟瀹炵幇琛ㄦ牸鏍规嵁绐楀彛瀹炴椂鍙樻崲

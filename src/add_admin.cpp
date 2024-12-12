@@ -8,6 +8,7 @@ add_admin::add_admin(QWidget *parent) :
     ui->setupUi(this);
     QIcon icon(":/img/icons/logo.png");
     this->setWindowIcon(icon);
+    this->setModal(true);
 }
 
 add_admin::~add_admin()
